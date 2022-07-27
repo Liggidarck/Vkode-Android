@@ -1,4 +1,4 @@
-package com.george.vkode
+package com.george.vkode.network.auth
 
 import android.content.Context
 import android.view.View
@@ -12,6 +12,7 @@ class AuthWebViewClient(private val context: Context,
 
     private var _currentUrl = ""
 
+    @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(wv: WebView, url: String): Boolean {
         wv.loadUrl(url)
         return true
