@@ -1,29 +1,34 @@
 package com.george.vkode.ui.login
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.george.vkode.BuildConfig
+import com.george.vkode.data.prefereces.PreferencesViewModel
 import com.george.vkode.network.auth.AuthStatus
 import com.george.vkode.network.auth.AuthWebViewClient
 import com.george.vkode.network.auth.VKAccountService
-import java.lang.StringBuilder
+import com.george.vkode.ui.MainActivity
 import java.net.URLEncoder
 import java.util.regex.Pattern
 
 @SuppressLint("UseRequireInsteadOfGet")
 class AuthFragment : Fragment() {
-    val TAG = "AuthFragment"
-    private val webview by lazy { WebView(context!!) }
+
+    private val TAG = "AuthFragment"
+    private val webView by lazy { WebView(context!!) }
     private val appId = BuildConfig.APP_ID
-    private val _authParams = StringBuilder("https://oauth.vk.com/authorize?").apply {
+
+    private val authParams = StringBuilder("https://oauth.vk.com/authorize?").apply {
         append(String.format("%s=%s", URLEncoder.encode("client_id", "UTF-8"), URLEncoder.encode(appId, "UTF-8")) + "&")
         append(String.format("%s=%s", URLEncoder.encode("redirect_uri", "UTF-8"), URLEncoder.encode("https://oauth.vk.com/blank.html", "UTF-8")) + "&")
         append(String.format("%s=%s", URLEncoder.encode("display", "UTF-8"), URLEncoder.encode("mobile", "UTF-8")) + "&")
@@ -35,16 +40,14 @@ class AuthFragment : Fragment() {
         append(String.format("%s=%s", URLEncoder.encode("revoke", "UTF-8"), URLEncoder.encode("1", "UTF-8")))
     }.toString()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ) = webview
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?) = webView
 
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        webview.webViewClient = AuthWebViewClient(context!!) { status ->
+        webView.webViewClient = AuthWebViewClient(context!!) { status ->
             when (status) {
                 AuthStatus.ERROR -> {
                     Toast.makeText(context, "Не верный логин или пароль", Toast.LENGTH_LONG)
@@ -55,13 +58,22 @@ class AuthFragment : Fragment() {
                     Toast.makeText(context, "Аккаунт заблокирован", Toast.LENGTH_LONG).show()
                 }
                 AuthStatus.SUCCESS -> {
-                    val url = webview.url!!
+                    val url = webView.url!!
                     Log.d(TAG, "onViewCreated: $url")
                     val tokenMather = Pattern.compile("access_token=\\w+.*").matcher(url)
                     if (tokenMather.find()) {
                         val parseUrl = tokenMather.group().replace("access_token=".toRegex(), "")
                         val urlParser: List<String> = parseUrl.split("&")
                         val token = urlParser[0]
+
+                        val preferencesViewModel: PreferencesViewModel =
+                            ViewModelProvider(this)[PreferencesViewModel::class.java]
+                        preferencesViewModel.saveToken(token)
+
+                        activity?.let {
+                            val intent = Intent(it, MainActivity::class.java)
+                            it.startActivity(intent)
+                        }
                     }
                 }
                 AuthStatus.AUTH -> {
@@ -78,13 +90,12 @@ class AuthFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-
         showAuthWindow()
     }
 
     private fun showAuthWindow() {
         CookieManager.getInstance().removeAllCookies(null)
-        webview.loadUrl(_authParams)
+        webView.loadUrl(authParams)
     }
 
 }
