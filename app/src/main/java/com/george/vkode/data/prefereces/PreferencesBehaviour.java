@@ -6,4 +6,8 @@ public interface PreferencesBehaviour {
 
     String getToken();
 
+    void saveUserId(int userId);
+
+    String getUserId();
+
 }

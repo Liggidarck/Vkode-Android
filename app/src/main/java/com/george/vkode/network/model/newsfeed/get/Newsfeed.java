@@ -14,4 +14,12 @@ public class Newsfeed {
     @Expose
     String next_from;
 
+
+    public List<NewsfeedItems> getItems() {
+        return items;
+    }
+
+    public String getNext_from() {
+        return next_from;
+    }
 }

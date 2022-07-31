@@ -6,6 +6,7 @@ public class Keys {
 
     public static final String APP_PREFERENCES = "APP_PREFERENCES";
     public static final String APP_TOKEN = "APP_TOKEN";
+    public static final String USER_ID = "USER_ID";
 
 
 }

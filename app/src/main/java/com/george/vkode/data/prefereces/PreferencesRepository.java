@@ -2,6 +2,7 @@ package com.george.vkode.data.prefereces;
 
 import static com.george.vkode.utils.Keys.APP_PREFERENCES;
 import static com.george.vkode.utils.Keys.APP_TOKEN;
+import static com.george.vkode.utils.Keys.USER_ID;
 
 import android.app.Application;
 import android.content.Context;
@@ -26,6 +27,16 @@ public class PreferencesRepository implements PreferencesBehaviour {
     @Override
     public String getToken() {
         return sharedPreferences.getString(APP_TOKEN, null);
+    }
+
+    @Override
+    public void saveUserId(int userId) {
+        editor.putInt(USER_ID, userId).apply();
+    }
+
+    @Override
+    public String getUserId() {
+        return sharedPreferences.getString(USER_ID, null);
     }
 
 

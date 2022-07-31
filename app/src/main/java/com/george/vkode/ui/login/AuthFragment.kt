@@ -14,9 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.george.vkode.BuildConfig
 import com.george.vkode.data.prefereces.PreferencesViewModel
-import com.george.vkode.network.auth.AuthStatus
-import com.george.vkode.network.auth.AuthWebViewClient
-import com.george.vkode.network.auth.VKAccountService
+import com.george.vkode.network.api.auth.AuthStatus
+import com.george.vkode.network.api.auth.AuthWebViewClient
+import com.george.vkode.network.api.auth.VKAccountService
 import com.george.vkode.ui.MainActivity
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -61,20 +61,27 @@ class AuthFragment : Fragment() {
                     val url = webView.url!!
                     Log.d(TAG, "onViewCreated: $url")
                     val tokenMather = Pattern.compile("access_token=\\w+.*").matcher(url)
-                    if (tokenMather.find()) {
+                    val userIdMather = Pattern.compile("user_id=\\w+").matcher(url)
+
+                    if (tokenMather.find() && userIdMather.find()) {
                         val parseUrl = tokenMather.group().replace("access_token=".toRegex(), "")
                         val urlParser: List<String> = parseUrl.split("&")
-                        val token = urlParser[0]
 
+                        val token = urlParser[0]
+                        val userId = userIdMather.group().replace("user_id=".toRegex(), "").toInt()
+                        Log.d(TAG, "onViewCreated: userID: $userId")
                         val preferencesViewModel: PreferencesViewModel =
                             ViewModelProvider(this)[PreferencesViewModel::class.java]
+
                         preferencesViewModel.saveToken(token)
+                        preferencesViewModel.saveUserId(userId)
 
                         activity?.let {
                             val intent = Intent(it, MainActivity::class.java)
                             it.startActivity(intent)
                         }
                     }
+
                 }
                 AuthStatus.AUTH -> {
                     Log.d(TAG, "onViewCreated: User in auth")

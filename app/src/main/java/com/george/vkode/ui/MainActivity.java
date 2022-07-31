@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -21,16 +22,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        SplashScreen.installSplashScreen(this);
 
         PreferencesViewModel preferencesViewModel =
                 new ViewModelProvider(this).get(PreferencesViewModel.class);
 
-        String token = preferencesViewModel.getToken();
-        if (token == null)
-            startActivity(new Intent(this, LoginActivity.class));
+        if (preferencesViewModel.getToken() == null) {
+            finish();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
 
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         NavController navController = Navigation.findNavController(this, R.id.navHostFragmentMain);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }

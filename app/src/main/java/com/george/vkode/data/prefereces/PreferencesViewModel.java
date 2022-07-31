@@ -22,4 +22,12 @@ public class PreferencesViewModel extends AndroidViewModel {
         return preferencesRepository.getToken();
     }
 
+    public void saveUserId(int userId) {
+        preferencesRepository.saveUserId(userId);
+    }
+
+    public String getUserId() {
+        return preferencesRepository.getUserId();
+    }
+
 }

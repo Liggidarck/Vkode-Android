@@ -20,7 +20,19 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new AccountViewModel(application, token);
+        if (modelClass == AccountViewModel.class) {
+            return (T) new AccountViewModel(application, token);
+        }
+
+        if(modelClass == NewsfeedViewModel.class) {
+            return (T) new NewsfeedViewModel(application, token);
+        }
+
+        if(modelClass == GroupViewModel.class) {
+            return (T) new GroupViewModel(application, token);
+        }
+
+        return null;
     }
 
 }
