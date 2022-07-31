@@ -35,8 +35,8 @@ public class PreferencesRepository implements PreferencesBehaviour {
     }
 
     @Override
-    public String getUserId() {
-        return sharedPreferences.getString(USER_ID, null);
+    public int getUserId() {
+        return sharedPreferences.getInt(USER_ID, 0);
     }
 
 

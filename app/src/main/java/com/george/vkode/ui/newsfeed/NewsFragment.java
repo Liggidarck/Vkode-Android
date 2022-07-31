@@ -30,6 +30,7 @@ public class NewsFragment extends Fragment {
         View root = binding.getRoot();
 
         PreferencesViewModel preferencesViewModel = new ViewModelProvider(this).get(PreferencesViewModel.class);
+
         AccountViewModel accountViewModel = new ViewModelProvider(
                 this,
                 new ViewModelFactory(this.requireActivity().getApplication(), preferencesViewModel.getToken())
@@ -40,9 +41,8 @@ public class NewsFragment extends Fragment {
                 new ViewModelFactory(this.requireActivity().getApplication(), preferencesViewModel.getToken())
         ).get(NewsfeedViewModel.class);
 
-        newsfeedViewModel.getNewsfeed(null, null).observe(NewsFragment.this.requireActivity(), newsfeedResponse -> {
-            Log.d(TAG, "onCreateView: " + newsfeedResponse.getResponse().getNext_from());
-        });
+        Log.d(TAG, "onCreateView: TOKEN: " + preferencesViewModel.getToken());
+        Log.d(TAG, "onCreateView: USER ID: " + preferencesViewModel.getUserId());
 
         return root;
     }

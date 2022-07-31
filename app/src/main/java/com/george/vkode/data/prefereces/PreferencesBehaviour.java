@@ -8,6 +8,6 @@ public interface PreferencesBehaviour {
 
     void saveUserId(int userId);
 
-    String getUserId();
+    int getUserId();
 
 }

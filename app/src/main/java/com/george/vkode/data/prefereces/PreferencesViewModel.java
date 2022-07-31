@@ -26,7 +26,7 @@ public class PreferencesViewModel extends AndroidViewModel {
         preferencesRepository.saveUserId(userId);
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return preferencesRepository.getUserId();
     }
 
