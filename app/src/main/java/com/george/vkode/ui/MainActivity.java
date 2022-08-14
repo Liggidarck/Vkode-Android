@@ -18,6 +18,7 @@ import com.george.vkode.data.prefereces.PreferencesViewModel;
 import com.george.vkode.databinding.ActivityMainBinding;
 import com.george.vkode.network.model.common.user.UserPhoto;
 import com.george.vkode.ui.login.LoginActivity;
+import com.george.vkode.ui.profile.ProfileFragment;
 import com.george.vkode.ui.viewModel.AccountViewModel;
 import com.george.vkode.ui.viewModel.LocalUserViewModel;
 import com.george.vkode.ui.viewModel.ViewModelFactory;
@@ -90,25 +91,23 @@ public class MainActivity extends AppCompatActivity {
             String status = profileInfoResponse.getResponse().getStatus();
             String phone = profileInfoResponse.getResponse().getPhone();
 
-            LocalUser user = new LocalUser(id, firstName, lastName, maidenName,
-                    screenName, sex, relation, birthday, birthdayVisibility,
-                    homeTown, status, phone);
-
             accountViewModel.getUserPhoto().observe(this, userPhotoResponse -> {
                 List<UserPhoto> photos = userPhotoResponse.getResponse();
                 for(UserPhoto userPhoto: photos) {
-                    user.setPhoto_50(userPhoto.getPhoto_50());
-                    user.setPhoto_100(userPhoto.getPhoto_100());
-                    user.setPhoto_200(userPhoto.getPhoto_200());
-                    user.setPhoto_200_orig(userPhoto.getPhoto_200_orig());
-                    user.setPhoto_400_orig(userPhoto.getPhoto_400_orig());
+                    Log.d(TAG, "saveUser: " + userPhoto.getPhoto_50());
+
+                    LocalUser user = new LocalUser(id, firstName, lastName, maidenName,
+                            screenName, sex, relation, birthday, birthdayVisibility,
+                            homeTown, status, phone, userPhoto.getPhoto_200(),
+                            userPhoto.getPhoto_200_orig(), userPhoto.getPhoto_400_orig(),
+                            userPhoto.getPhoto_50(), userPhoto.getPhoto_100());
+
+                    localUserViewModel.insert(user);
                 }
             });
 
-            localUserViewModel.insert(user);
+            progressDialog.dismiss();
         });
-
-        progressDialog.dismiss();
     }
 
 }
