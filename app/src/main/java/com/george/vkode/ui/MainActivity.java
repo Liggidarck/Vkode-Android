@@ -16,10 +16,13 @@ import com.george.vkode.R;
 import com.george.vkode.data.database.users.LocalUser;
 import com.george.vkode.data.prefereces.PreferencesViewModel;
 import com.george.vkode.databinding.ActivityMainBinding;
+import com.george.vkode.network.model.common.user.UserPhoto;
 import com.george.vkode.ui.login.LoginActivity;
 import com.george.vkode.ui.viewModel.AccountViewModel;
 import com.george.vkode.ui.viewModel.LocalUserViewModel;
 import com.george.vkode.ui.viewModel.ViewModelFactory;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     void getUserData() {
         localUserViewModel = new ViewModelProvider(this)
                 .get(LocalUserViewModel.class);
+
         localUserViewModel.getAllUsers().observe(this, localUsers -> {
             Log.d(TAG, "getUserData: " + localUsers.size());
             if (localUsers.size() == 0) {
@@ -90,10 +94,21 @@ public class MainActivity extends AppCompatActivity {
                     screenName, sex, relation, birthday, birthdayVisibility,
                     homeTown, status, phone);
 
-            localUserViewModel.insert(user);
+            accountViewModel.getUserPhoto().observe(this, userPhotoResponse -> {
+                List<UserPhoto> photos = userPhotoResponse.getResponse();
+                for(UserPhoto userPhoto: photos) {
+                    user.setPhoto_50(userPhoto.getPhoto_50());
+                    user.setPhoto_100(userPhoto.getPhoto_100());
+                    user.setPhoto_200(userPhoto.getPhoto_200());
+                    user.setPhoto_200_orig(userPhoto.getPhoto_200_orig());
+                    user.setPhoto_400_orig(userPhoto.getPhoto_400_orig());
+                }
+            });
 
-            progressDialog.dismiss();
+            localUserViewModel.insert(user);
         });
+
+        progressDialog.dismiss();
     }
 
 }

@@ -8,18 +8,29 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import com.george.vkode.R;
 import com.george.vkode.databinding.FragmentMenuBinding;
 
 public class MenuFragment extends Fragment {
 
-    FragmentMenuBinding binding;
+    private FragmentMenuBinding binding;
+    private NavController navController;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMenuBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        navController = Navigation.findNavController(MenuFragment.this.requireActivity(),
+                R.id.navHostFragmentMain);
+
+        binding.cardProfile.setOnClickListener(v -> {
+            navController.navigate(R.id.action_nav_menu_to_profileFragment);
+        });
 
         return root;
     }

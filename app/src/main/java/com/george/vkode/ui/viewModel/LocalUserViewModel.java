@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.george.vkode.data.database.users.LocalUser;
 import com.george.vkode.data.database.users.LocalUserRepository;
@@ -32,6 +33,10 @@ public class LocalUserViewModel extends AndroidViewModel {
 
     public void delete(LocalUser user) {
         repository.delete(user);
+    }
+    
+    public LiveData<LocalUser> getUserById(int id) {
+        return repository.getUserById(id);
     }
 
     public LiveData<List<LocalUser>> getAllUsers() {

@@ -3,6 +3,7 @@ package com.george.vkode.data.database.users;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +30,17 @@ public class LocalUserRepository {
 
     public void delete(LocalUser user) {
         service.execute(() -> usersDao.delete(user));
+    }
+
+
+    public LiveData<LocalUser> getUserById(int id) {
+        MutableLiveData<LocalUser> user = new MutableLiveData<>();
+
+        service.execute(() -> {
+            user.postValue(usersDao.getUserById(id));
+        });
+
+        return user;
     }
 
     public LiveData<List<LocalUser>> getAllUsers() {

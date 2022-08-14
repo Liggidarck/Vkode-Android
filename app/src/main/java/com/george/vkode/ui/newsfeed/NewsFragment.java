@@ -31,16 +31,6 @@ public class NewsFragment extends Fragment {
 
         PreferencesViewModel preferencesViewModel = new ViewModelProvider(this).get(PreferencesViewModel.class);
 
-        AccountViewModel accountViewModel = new ViewModelProvider(
-                this,
-                new ViewModelFactory(this.requireActivity().getApplication(), preferencesViewModel.getToken())
-        ).get(AccountViewModel.class);
-
-        NewsfeedViewModel newsfeedViewModel = new ViewModelProvider(
-                this,
-                new ViewModelFactory(this.requireActivity().getApplication(), preferencesViewModel.getToken())
-        ).get(NewsfeedViewModel.class);
-
         Log.d(TAG, "onCreateView: TOKEN: " + preferencesViewModel.getToken());
         Log.d(TAG, "onCreateView: USER ID: " + preferencesViewModel.getUserId());
 

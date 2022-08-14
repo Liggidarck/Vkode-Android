@@ -21,6 +21,9 @@ public interface UsersDao {
     @Delete
     void delete(LocalUser user);
 
+    @Query("SELECT * FROM users_table WHERE userId LIKE :userId")
+    LocalUser getUserById(int userId);
+
     @Query("SELECT * FROM users_table")
     LiveData<List<LocalUser>> getAllUsers();
 
