@@ -22,19 +22,19 @@ import java.net.URLEncoder
 import java.util.regex.Pattern
 
 @SuppressLint("UseRequireInsteadOfGet")
-class AuthFragment : Fragment() {
+class AuthWebViewFragment : Fragment() {
 
     private val TAG = "AuthFragment"
     private val webView by lazy { WebView(context!!) }
-    private val appId = BuildConfig.APP_ID
+//    private val appId = BuildConfig.APP_ID
 
     private val authParams = StringBuilder("https://oauth.vk.com/authorize?").apply {
-        append(String.format("%s=%s", URLEncoder.encode("client_id", "UTF-8"), URLEncoder.encode(appId, "UTF-8")) + "&")
+        append(String.format("%s=%s", URLEncoder.encode("client_id", "UTF-8"), URLEncoder.encode("1", "UTF-8")) + "&")
         append(String.format("%s=%s", URLEncoder.encode("redirect_uri", "UTF-8"), URLEncoder.encode("https://oauth.vk.com/blank.html", "UTF-8")) + "&")
         append(String.format("%s=%s", URLEncoder.encode("display", "UTF-8"), URLEncoder.encode("mobile", "UTF-8")) + "&")
         append(String.format("%s=%s", URLEncoder.encode("scope", "UTF-8"), URLEncoder.encode(
             VKAccountService.SCOPE, "UTF-8")) + "&")
-        append(String.format("%s=%s", URLEncoder.encode("response_type", "UTF-8"), URLEncoder.encode("token", "UTF-8")) + "&")
+        append(String.format("%s=%s", URLEncoder.encode("response_type", "UTF-8"), URLEncoder.encode("code", "UTF-8")) + "&")
         append(String.format("%s=%s", URLEncoder.encode("v", "UTF-8"), URLEncoder.encode("5.131", "UTF-8")) + "&")
         append(String.format("%s=%s", URLEncoder.encode("state", "UTF-8"), URLEncoder.encode("12345", "UTF-8")) + "&")
         append(String.format("%s=%s", URLEncoder.encode("revoke", "UTF-8"), URLEncoder.encode("1", "UTF-8")))
@@ -47,6 +47,7 @@ class AuthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d(TAG, "onViewCreated: $authParams")
         webView.webViewClient = AuthWebViewClient(context!!) { status ->
             when (status) {
                 AuthStatus.ERROR -> {
@@ -60,21 +61,18 @@ class AuthFragment : Fragment() {
                 AuthStatus.SUCCESS -> {
                     val url = webView.url!!
                     Log.d(TAG, "onViewCreated: $url")
-                    val tokenMather = Pattern.compile("access_token=\\w+.*").matcher(url)
-                    val userIdMather = Pattern.compile("user_id=\\w+").matcher(url)
 
-                    if (tokenMather.find() && userIdMather.find()) {
-                        val parseUrl = tokenMather.group().replace("access_token=".toRegex(), "")
-                        val urlParser: List<String> = parseUrl.split("&")
+                    val codeMather = Pattern.compile("code=\\w+.*").matcher(url)
+                    if (codeMather.find()) {
+                        val parseUrl = codeMather.group().replace("code=".toRegex(), "")
+                        val yourArray: List<String> = parseUrl.split("&")
+                        val code = yourArray[0]
 
-                        val token = urlParser[0]
-                        val userId = userIdMather.group().replace("user_id=".toRegex(), "").toInt()
-                        Log.d(TAG, "onViewCreated: userID: $userId")
                         val preferencesViewModel: PreferencesViewModel =
                             ViewModelProvider(this)[PreferencesViewModel::class.java]
+                        Log.d(TAG, "onViewCreated: $code")
 
-                        preferencesViewModel.saveToken(token)
-                        preferencesViewModel.saveUserId(userId)
+                        preferencesViewModel.saveCode(code)
 
                         activity?.let {
                             val intent = Intent(it, MainActivity::class.java)

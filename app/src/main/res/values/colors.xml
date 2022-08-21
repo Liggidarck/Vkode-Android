@@ -10,5 +10,7 @@
     <color name="blue_dark">#1c67bd</color>
     <color name="black">#FF000000</color>
     <color name="gray">#f0f0f0</color>
+    <color name="gray_icons">#8a8a8a
+    </color>
     <color name="white">#FFFFFFFF</color>
 </resources>

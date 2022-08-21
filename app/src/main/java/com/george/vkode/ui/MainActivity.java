@@ -16,20 +16,18 @@ import com.george.vkode.R;
 import com.george.vkode.data.database.users.LocalUser;
 import com.george.vkode.data.prefereces.PreferencesViewModel;
 import com.george.vkode.databinding.ActivityMainBinding;
-import com.george.vkode.network.model.common.user.UserPhoto;
-import com.george.vkode.ui.login.LoginActivity;
-import com.george.vkode.ui.profile.ProfileFragment;
+import com.george.vkode.ui.login.LoginKotlinActivity;
 import com.george.vkode.ui.viewModel.AccountViewModel;
 import com.george.vkode.ui.viewModel.LocalUserViewModel;
 import com.george.vkode.ui.viewModel.ViewModelFactory;
-
-import java.util.List;
+import com.vk.api.sdk.VK;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
     ActivityMainBinding binding;
+
     private PreferencesViewModel preferencesViewModel;
     private LocalUserViewModel localUserViewModel;
     private ProgressDialog progressDialog;
@@ -41,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
         preferencesViewModel = new ViewModelProvider(this).get(PreferencesViewModel.class);
 
-        if (preferencesViewModel.getToken() == null) {
+        if (!VK.isLoggedIn()) {
             finish();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            startActivity(new Intent(MainActivity.this, LoginKotlinActivity.class));
         }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -53,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         getUserData();
     }
+
 
     void getUserData() {
         localUserViewModel = new ViewModelProvider(this)
@@ -91,23 +90,13 @@ public class MainActivity extends AppCompatActivity {
             String status = profileInfoResponse.getResponse().getStatus();
             String phone = profileInfoResponse.getResponse().getPhone();
 
-            accountViewModel.getUserPhoto().observe(this, userPhotoResponse -> {
-                List<UserPhoto> photos = userPhotoResponse.getResponse();
-                for(UserPhoto userPhoto: photos) {
-                    Log.d(TAG, "saveUser: " + userPhoto.getPhoto_50());
+            LocalUser user = new LocalUser(id, firstName, lastName, maidenName,
+                    screenName, sex, relation, birthday, birthdayVisibility,
+                    homeTown, status, phone);
 
-                    LocalUser user = new LocalUser(id, firstName, lastName, maidenName,
-                            screenName, sex, relation, birthday, birthdayVisibility,
-                            homeTown, status, phone, userPhoto.getPhoto_200(),
-                            userPhoto.getPhoto_200_orig(), userPhoto.getPhoto_400_orig(),
-                            userPhoto.getPhoto_50(), userPhoto.getPhoto_100());
-
-                    localUserViewModel.insert(user);
-                }
-            });
+            localUserViewModel.insert(user);
 
             progressDialog.dismiss();
         });
     }
-
 }

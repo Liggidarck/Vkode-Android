@@ -22,17 +22,9 @@ public class LocalUser {
     String status;
     String phone;
 
-    String photo_200;
-    String photo_200_orig;
-    String photo_400_orig;
-    String photo_50;
-    String photo_100;
-
     public LocalUser(int userId, String firstName, String lastName, String maidenName,
                      String screenName, int sex, int relation, String birthdate,
-                     int birthdateVisibility, String homeTown, String status, String phone,
-                     String photo_200, String photo_200_orig, String photo_400_orig,
-                     String photo_50, String photo_100) {
+                     int birthdateVisibility, String homeTown, String status, String phone) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -45,31 +37,6 @@ public class LocalUser {
         this.homeTown = homeTown;
         this.status = status;
         this.phone = phone;
-        this.photo_200 = photo_200;
-        this.photo_200_orig = photo_200_orig;
-        this.photo_400_orig = photo_400_orig;
-        this.photo_50 = photo_50;
-        this.photo_100 = photo_100;
-    }
-
-    public String getPhoto_200() {
-        return photo_200;
-    }
-
-    public String getPhoto_200_orig() {
-        return photo_200_orig;
-    }
-
-    public String getPhoto_400_orig() {
-        return photo_400_orig;
-    }
-
-    public String getPhoto_50() {
-        return photo_50;
-    }
-
-    public String getPhoto_100() {
-        return photo_100;
     }
 
     public void setId(int id) {

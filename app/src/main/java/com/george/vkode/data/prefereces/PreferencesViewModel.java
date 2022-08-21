@@ -22,6 +22,18 @@ public class PreferencesViewModel extends AndroidViewModel {
         return preferencesRepository.getToken();
     }
 
+    public void saveCode(String code) {
+        preferencesRepository.saveCode(code);
+    }
+
+    public String getCode() {
+        return preferencesRepository.getCode();
+    }
+
+    public void deleteToken() {
+        preferencesRepository.deleteToken();
+    }
+
     public void saveUserId(int userId) {
         preferencesRepository.saveUserId(userId);
     }

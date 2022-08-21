@@ -1,6 +1,6 @@
 package com.george.vkode.network.model.account.profileInfo;
 
-import com.george.vkode.network.model.common.user.User;
+import com.george.vkode.network.model.user.get.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

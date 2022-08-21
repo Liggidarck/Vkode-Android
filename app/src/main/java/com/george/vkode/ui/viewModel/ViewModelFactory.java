@@ -32,6 +32,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new GroupViewModel(application, token);
         }
 
+        if(modelClass == FriendsViewModel.class) {
+            return (T) new FriendsViewModel(application, token);
+        }
+
         return null;
     }
 

@@ -1,4 +1,4 @@
-package com.george.vkode.network.model.common.user;
+package com.george.vkode.network.model.user.get;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

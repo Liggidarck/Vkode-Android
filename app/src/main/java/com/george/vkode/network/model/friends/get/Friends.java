@@ -1,18 +1,17 @@
-package com.george.vkode.network.model.common.user;
+package com.george.vkode.network.model.friends.get;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class UserPhotoResponse implements Serializable {
+public class Friends implements Serializable {
 
     @SerializedName("response")
     @Expose
-    List<UserPhoto> response;
+    FriendsResponse response;
 
-    public List<UserPhoto> getResponse() {
+    public FriendsResponse getResponse() {
         return response;
     }
 }

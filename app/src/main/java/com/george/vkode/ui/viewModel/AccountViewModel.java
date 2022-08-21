@@ -8,9 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.george.vkode.network.model.account.info.InfoResponse;
 import com.george.vkode.network.model.account.profileInfo.ProfileInfoResponse;
-import com.george.vkode.network.model.common.user.User;
-import com.george.vkode.network.model.common.user.UserPhoto;
-import com.george.vkode.network.model.common.user.UserPhotoResponse;
+import com.george.vkode.network.model.user.get.UserPhotoResponse;
 import com.george.vkode.network.repository.AccountRepository;
 
 public class AccountViewModel extends AndroidViewModel {
