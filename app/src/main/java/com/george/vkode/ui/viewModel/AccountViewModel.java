@@ -9,27 +9,32 @@ import androidx.lifecycle.MutableLiveData;
 import com.george.vkode.network.model.account.info.InfoResponse;
 import com.george.vkode.network.model.account.profileInfo.ProfileInfoResponse;
 import com.george.vkode.network.model.user.get.UserPhotoResponse;
+import com.george.vkode.network.model.user.getFollowers.FollowersResponse;
 import com.george.vkode.network.repository.AccountRepository;
 
 public class AccountViewModel extends AndroidViewModel {
 
-    AccountRepository accountRepository;
+    AccountRepository repository;
 
     public AccountViewModel(@NonNull Application application, String token) {
         super(application);
-        accountRepository = new AccountRepository(token);
+        repository = new AccountRepository(token);
     }
 
     public MutableLiveData<ProfileInfoResponse> getProfileInfo() {
-        return accountRepository.getProfileInfo();
+        return repository.getProfileInfo();
     }
 
     public MutableLiveData<UserPhotoResponse> getUserPhoto() {
-        return accountRepository.getProfilePhotos();
+        return repository.getProfilePhotos();
+    }
+
+    public MutableLiveData<FollowersResponse> getFollowers(String fields) {
+        return repository.getFollowers(fields);
     }
 
     public MutableLiveData<InfoResponse> getInfo() {
-        return accountRepository.getInfo();
+        return repository.getInfo();
     }
 
 }

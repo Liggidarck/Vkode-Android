@@ -23,9 +23,9 @@ public class NewsfeedRepository {
         newsfeed = VkClient.getVkClient().create(INewsfeed.class);
     }
 
-    public MutableLiveData<NewsfeedResponse> getNewsfeed(String filters, String startFrom) {
+    public MutableLiveData<NewsfeedResponse> getNewsfeed(String filters, int max_photos, String startFrom) {
         MutableLiveData<NewsfeedResponse> newsfeedResponse = new MutableLiveData<>();
-        newsfeed.getNewsfeed(token, filters, startFrom, API_VERSION).enqueue(new Callback<NewsfeedResponse>() {
+        newsfeed.getNewsfeed(token, filters, max_photos, startFrom, API_VERSION).enqueue(new Callback<NewsfeedResponse>() {
             @Override
             public void onResponse(@NonNull Call<NewsfeedResponse> call, @NonNull Response<NewsfeedResponse> response) {
                 newsfeedResponse.setValue(response.body());

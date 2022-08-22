@@ -13,6 +13,7 @@ import com.george.vkode.network.api.methods.IUser;
 import com.george.vkode.network.model.account.info.InfoResponse;
 import com.george.vkode.network.model.account.profileInfo.ProfileInfoResponse;
 import com.george.vkode.network.model.user.get.UserPhotoResponse;
+import com.george.vkode.network.model.user.getFollowers.FollowersResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +47,24 @@ public class AccountRepository {
         });
 
         return profileInfo;
+    }
+
+    public MutableLiveData<FollowersResponse> getFollowers(String fields) {
+        MutableLiveData<FollowersResponse> followers = new MutableLiveData<>();
+        Log.d("AccountRepository", "getFollowers: " + user.getFollowers(token, fields, API_VERSION).request().url());
+        user.getFollowers(token, fields, API_VERSION).enqueue(new Callback<FollowersResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<FollowersResponse> call, @NonNull Response<FollowersResponse> response) {
+                followers.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<FollowersResponse> call, @NonNull Throwable t) {
+                followers.postValue(null);
+            }
+        });
+
+        return followers;
     }
 
     public MutableLiveData<UserPhotoResponse> getProfilePhotos() {

@@ -23,9 +23,12 @@
                     android:id="@+id/newPostCardView"
                     layout="@layout/new_post_card_view" />
 
-                <include layout="@layout/story_card_view" />
+                <include
+                    android:id="@+id/storyCardView"
+                    layout="@layout/story_card_view" />
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewNewsfeed"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 

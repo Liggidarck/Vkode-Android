@@ -18,8 +18,8 @@ public class NewsfeedViewModel extends AndroidViewModel {
         repository = new NewsfeedRepository(token);
     }
 
-    public MutableLiveData<NewsfeedResponse> getNewsfeed(String filters, String startFrom) {
-        return repository.getNewsfeed(filters, startFrom);
+    public MutableLiveData<NewsfeedResponse> getNewsfeed(String filters, int max_photos, String startFrom) {
+        return repository.getNewsfeed(filters, max_photos, startFrom);
     }
 
 }

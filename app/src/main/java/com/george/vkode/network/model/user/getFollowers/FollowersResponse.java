@@ -8,19 +8,11 @@ import java.util.List;
 
 public class FollowersResponse implements Serializable {
 
-    @SerializedName("count")
+    @SerializedName("response")
     @Expose
-    int count;
+    Followers response;
 
-    @SerializedName("items")
-    @Expose
-    List<Followers> items;
-
-    public int getCount() {
-        return count;
-    }
-
-    public List<Followers> getItems() {
-        return items;
+    public Followers getResponse() {
+        return response;
     }
 }
