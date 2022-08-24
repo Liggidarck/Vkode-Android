@@ -1,5 +1,6 @@
 package com.george.vkode.ui.newsfeed;
 
+import android.icu.util.LocaleData;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,29 +16,32 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.bumptech.glide.Glide;
 import com.george.vkode.data.prefereces.PreferencesViewModel;
 import com.george.vkode.databinding.FragmentNewsBinding;
-import com.george.vkode.network.model.common.link.Link;
-import com.george.vkode.network.model.common.photo.Photo;
+import com.george.vkode.network.model.common.group.Group;
 import com.george.vkode.network.model.common.photo.PhotoSize;
 import com.george.vkode.network.model.newsfeed.get.NewsfeedAttachment;
-import com.george.vkode.network.model.newsfeed.get.NewsfeedItems;
+import com.george.vkode.network.model.newsfeed.get.NewsfeedItem;
 import com.george.vkode.network.model.user.get.UserPhoto;
-import com.george.vkode.ui.menu.MenuFragment;
 import com.george.vkode.ui.viewModel.AccountViewModel;
 import com.george.vkode.ui.viewModel.NewsfeedViewModel;
 import com.george.vkode.ui.viewModel.ViewModelFactory;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class NewsFragment extends Fragment {
 
     FragmentNewsBinding binding;
 
     NewsfeedAdapter newsfeedAdapter;
-    List<NewsfeedItems> newsfeedItems;
-    List<PhotoSize> photoSizes;
-
+    List<NewsfeedUiItem> newsfeedUiItems;
 
     PreferencesViewModel preferencesViewModel;
     NewsfeedViewModel newsfeedViewModel;
@@ -48,8 +52,7 @@ public class NewsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        newsfeedItems = new ArrayList<>();
-        photoSizes = new ArrayList<>();
+        newsfeedUiItems = new ArrayList<>();
     }
 
     @Nullable
@@ -64,27 +67,61 @@ public class NewsFragment extends Fragment {
 
         initRecyclerView();
 
-        newsfeedViewModel.getNewsfeed("post", 5, null).observe(NewsFragment.this.requireActivity(), newsfeedResponse -> {
+        newsfeedViewModel.getNewsfeed("post", 25, null).observe(NewsFragment.this.requireActivity(), newsfeedResponse -> {
+            List<NewsfeedItem> newsfeedItems = newsfeedResponse.getResponse().getItems();
+            List<Group> groupItems = newsfeedResponse.getResponse().getGroups();
 
-            newsfeedItems.addAll(newsfeedResponse.getResponse().getItems());
-            newsfeedAdapter.notifyDataSetChanged();
-
-            for(NewsfeedItems newsfeedItem: newsfeedItems) {
+            for (NewsfeedItem newsfeedItem : newsfeedItems) {
                 List<NewsfeedAttachment> attachments = newsfeedItem.getAttachments();
+                int id = Math.abs(newsfeedItem.getSource_id());
+                int itemDate = newsfeedItem.getDate();
 
-                for (NewsfeedAttachment attachment: attachments) {
-                    String postType = attachment.getType();
+                Date date = new Date((long) itemDate * 1000L);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-                    if(postType.equals("photo")) {
-                        Photo photo = attachment.getPhoto();
+                String formattedDate = dateFormat.format(date);
+                String formattedTime = timeFormat.format(date);
 
-                        photoSizes.addAll(photo.getSizes());
-                        newsfeedAdapter.notifyDataSetChanged();
+                LocalDate localDate = LocalDate.parse(formattedDate);
+                int day = localDate.getDayOfMonth();
+                String moth = localDate.getMonth().toString();
+
+                String photoPost = null;
+
+                try {
+                    for (NewsfeedAttachment attachment : attachments) {
+                        List<PhotoSize> photoSizes = attachment.getPhoto().getSizes();
+
+                        for (PhotoSize photoSize : photoSizes) {
+
+                            String type = photoSize.getType();
+
+                            if (type.equals("z")) {
+                                photoPost = photoSize.getUrl();
+                            }
+
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                    if(postType.equals("link")) {
-                        Link link = attachment.getLink();
-                        Log.d(TAG, "link title: " + link.getTitle());
+                for (Group group : groupItems) {
+                    int groupId = group.getId();
+                    Log.d(TAG, "group id: " + groupId);
+
+                    if (id == groupId) {
+                        String title = group.getName();
+                        String text = newsfeedItem.getText();
+                        String photo = group.getPhoto_200();
+                        Log.d(TAG, "title group: " + title);
+
+                        NewsfeedUiItem newsfeedUiItem = new NewsfeedUiItem(title, text, photo,
+                                day, moth, formattedTime, photoPost);
+
+                        newsfeedUiItems.add(newsfeedUiItem);
+                        newsfeedAdapter.notifyDataSetChanged();
                     }
 
                 }
@@ -99,7 +136,7 @@ public class NewsFragment extends Fragment {
     private void getUserAvatar() {
         accountViewModel.getUserPhoto().observe(NewsFragment.this.requireActivity(), userPhotoResponse -> {
             List<UserPhoto> photos = userPhotoResponse.getResponse();
-            for(UserPhoto userPhoto: photos) {
+            for (UserPhoto userPhoto : photos) {
 
                 Glide.with(NewsFragment.this.requireActivity())
                         .load(userPhoto.getPhoto_100())
@@ -116,7 +153,7 @@ public class NewsFragment extends Fragment {
     }
 
     private void initRecyclerView() {
-        newsfeedAdapter = new NewsfeedAdapter(NewsFragment.this.requireActivity(), newsfeedItems, photoSizes);
+        newsfeedAdapter = new NewsfeedAdapter(NewsFragment.this.requireActivity(), newsfeedUiItems);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
 

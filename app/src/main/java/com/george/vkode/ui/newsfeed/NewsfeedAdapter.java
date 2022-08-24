@@ -1,6 +1,5 @@
 package com.george.vkode.ui.newsfeed;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,23 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.george.vkode.R;
-import com.george.vkode.network.model.common.photo.PhotoSize;
-import com.george.vkode.network.model.newsfeed.get.NewsfeedAttachment;
-import com.george.vkode.network.model.newsfeed.get.NewsfeedItems;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.ViewHolder> {
 
     Context context;
-    List<NewsfeedItems> newsfeedItems;
-    List<PhotoSize> photoSizes;
+    List<NewsfeedUiItem> newsfeedItems;
 
-    public NewsfeedAdapter(Context context, List<NewsfeedItems> newsfeedItems, List<PhotoSize> photoSizes) {
+    public NewsfeedAdapter(Context context, List<NewsfeedUiItem> newsfeedItems) {
         this.context = context;
         this.newsfeedItems = newsfeedItems;
-        this.photoSizes = photoSizes;
     }
 
     @NonNull
@@ -41,10 +34,21 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        NewsfeedItems newsfeedItem = newsfeedItems.get(position);
-        PhotoSize photoSize = photoSizes.get(position);
+        NewsfeedUiItem newsfeedUiItem = newsfeedItems.get(position);
+        String time = newsfeedUiItem.getDay() + " " + newsfeedUiItem.getMoth() + " " + newsfeedUiItem.getTime();
 
-        holder.textViewNewsfeedText.setText(newsfeedItem.getText());
+        holder.textViewNewsfeedTitle.setText(newsfeedUiItem.getTitle());
+        holder.textViewNewsfeedText.setText(newsfeedUiItem.getText());
+        holder.textViewNewsfeedTimeCreate.setText(time);
+
+        Glide.with(context)
+                .load(newsfeedUiItem.getPhoto())
+                .centerCrop()
+                .into(holder.avatarNewsfeedItem);
+
+        Glide.with(context)
+                .load(newsfeedUiItem.getPhotoPost())
+                .into(holder.imageViewNewsfeedItem);
 
     }
 
